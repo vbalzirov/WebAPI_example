@@ -10,10 +10,13 @@ namespace CompanyName.Application.Services.ProductService.Services
         private readonly IOrdersDbRepository repository;
         private readonly IMapper mapper;
 
+        public Guid Guid { get; private set; }
+
         public OrdersService(IOrdersDbRepository orderRepository, IMapper autoMapper)
         {
             repository = orderRepository;
             mapper = autoMapper;
+            Guid = Guid.NewGuid();
         }
 
         public Order Create(Order order) 

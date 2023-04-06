@@ -77,13 +77,13 @@ namespace CompanyName.Application.Dal.Orders.Repositories
 
             context.Products.AddRange(product1, product2, product3);
 
-            var order1 = new Models.OrderDal
+            var order1 = new OrderDal
             {
                 Number = "000001-1",
                 IssueDate = DateTimeOffset.UtcNow
             };
 
-            var order2 = new Models.OrderDal
+            var order2 = new OrderDal
             {
                 Number = "000001-2",
                 IssueDate = DateTimeOffset.UtcNow

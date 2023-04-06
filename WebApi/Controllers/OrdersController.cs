@@ -5,6 +5,7 @@ using CompanyName.Application.WebApi.OrdersApi.Models.Orders.Requests;
 using CompanyName.Application.WebApi.ProductApi.Models.Orders.Requests;
 using CompanyName.Application.WebApi.ProductApi.Models.Orders.Responses;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CompanyName.Application.WebApi.OrdersApi
 {
@@ -12,27 +13,32 @@ namespace CompanyName.Application.WebApi.OrdersApi
     [Route("[controller]")]
     public class OrdersController : ControllerBase
     {
-        private readonly ILogger<OrdersController> _logger;
-        private readonly IMapper _mapper;
-        private readonly IOrdersService _service;
+        private readonly ILogger<OrdersController> logger;
+        private readonly IMapper mapper;
+        private readonly IOrdersService service;
 
         public OrdersController(
-            IOrdersService ordersSrvice,
+            IOrdersService ordersService,
             ILogger<OrdersController> logger,
             IMapper automapper)
         {
-            _logger = logger;
-            _service = ordersSrvice;
-            _mapper = automapper;
+            this.logger = logger;
+            service = ordersService;
+            mapper = automapper;
         }
 
         [HttpGet(Name = "GetOrders")]
         public IActionResult Get()
         {
-            var list = _service.Get();
-            var result = _mapper.Map<IEnumerable<Order>, IEnumerable<GetOrderResponse>>(list);
+            logger.Log(LogLevel.Information, "Get Orders request recieved");
 
-            return Ok(result);
+            var list = service.Get();
+            var result = mapper.Map<IEnumerable<Order>, IEnumerable<GetOrderResponse>>(list);
+            var respose = new { Result = result, Guid = service.Guid };
+
+            logger.Log(LogLevel.Information, "Get Orders response sent", respose);
+
+            return Ok(respose);
         }
 
         [HttpGet("{id}", Name = "GetOrderById")]
@@ -40,8 +46,8 @@ namespace CompanyName.Application.WebApi.OrdersApi
         {
             try
             {
-                var order = _service.Get(id);
-                return Ok(_mapper.Map<Order, GetOrderResponse>(order));
+                var order = service.Get(id);
+                return Ok(mapper.Map<Order, GetOrderResponse>(order));
             }
             catch
             {
@@ -57,10 +63,10 @@ namespace CompanyName.Application.WebApi.OrdersApi
         [HttpPost]
         public IActionResult CreateOrder(CreateOrderRequest request)
         {
-            var order = _mapper.Map<CreateOrderRequest, Order>(request);
-            var result = _service.Create(order);
+            var order = mapper.Map<CreateOrderRequest, Order>(request);
+            var result = service.Create(order);
 
-            var orderResponse = _mapper.Map<Order, GetOrderResponse>(result);
+            var orderResponse = mapper.Map<Order, GetOrderResponse>(result);
 
             return Ok(orderResponse);
         }
@@ -68,17 +74,17 @@ namespace CompanyName.Application.WebApi.OrdersApi
         [HttpDelete("{id}")]
         public IActionResult DeleteOrder(int id)
         {
-            _service.Delete(id);
+            service.Delete(id);
             return StatusCode(StatusCodes.Status204NoContent);
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateOrder(int id, UpdateOrderRequest request)
         {
-            var order = _mapper.Map<UpdateOrderRequest, Order>(request);
+            var order = mapper.Map<UpdateOrderRequest, Order>(request);
             order.Id = id;
 
-            _service.Update(order);
+            service.Update(order);
             return StatusCode(StatusCodes.Status200OK);
         }
     }

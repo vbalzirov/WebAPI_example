@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
 
-        public string Number { get; set; }
+        public string Number { get; set; } = null!;
 
         public DateTimeOffset IssueDate { get; set; }
 

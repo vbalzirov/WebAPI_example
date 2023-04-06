@@ -4,6 +4,8 @@ namespace CompanyName.Application.Services.ProductService.Services
 {
     public interface IOrdersService
     {
+        Guid Guid { get; }
+
         Order Create(Order order);
         
         IEnumerable<Order> Get();
