@@ -4,11 +4,13 @@ using CompanyName.Application.Services.ProductService.Services;
 using CompanyName.Application.WebApi.OrdersApi.Models.Orders.Requests;
 using CompanyName.Application.WebApi.ProductApi.Models.Orders.Requests;
 using CompanyName.Application.WebApi.ProductApi.Models.Orders.Responses;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace CompanyName.Application.WebApi.OrdersApi
 {
+    [Authorize (AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("[controller]")]
     public class OrdersController : ControllerBase
@@ -34,11 +36,10 @@ namespace CompanyName.Application.WebApi.OrdersApi
 
             var list = service.Get();
             var result = mapper.Map<IEnumerable<Order>, IEnumerable<GetOrderResponse>>(list);
-            var respose = new { Result = result, Guid = service.Guid };
 
-            logger.Log(LogLevel.Information, "Get Orders response sent", respose);
+            logger.Log(LogLevel.Information, "Get Orders response sent", result);
 
-            return Ok(respose);
+            return Ok(result);
         }
 
         [HttpGet("{id}", Name = "GetOrderById")]

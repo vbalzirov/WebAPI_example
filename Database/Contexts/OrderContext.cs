@@ -1,4 +1,5 @@
-﻿using CompanyName.Application.Dal.Orders.Configuration;
+﻿using CompanyName.Application.Core.Configurations;
+using CompanyName.Application.Dal.Orders.Configuratioin;
 using CompanyName.Application.Dal.Orders.Models;
 using Microsoft.EntityFrameworkCore;
 

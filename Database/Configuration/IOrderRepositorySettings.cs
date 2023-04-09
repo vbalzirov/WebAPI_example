@@ -1,16 +1,8 @@
-﻿namespace CompanyName.Application.Dal.Orders.Configuration
+﻿using CompanyName.Application.Core.Configurations;
+
+namespace CompanyName.Application.Dal.Orders.Configuratioin
 {
-    public interface IOrderRepositorySettings
+    public interface IOrderRepositorySettings : IRepositorySettings
     {
-        string ConnectionString { get; }
-
-        bool IsInMemory { get; }
-
-        string DatabaseName { get; }
-
-        int[] array
-        {
-            get;
-        }
     }
 }
