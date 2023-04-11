@@ -10,6 +10,7 @@ using CompanyName.Application.Dal.Auth.Repository;
 using CompanyName.Application.Services.AuthService.Services;
 using CompanyName.Application.Dal.Orders.Configuratioin;
 using CompanyName.Application.WebApi.OrdersApi.Configuratioin;
+using Microsoft.Extensions.Logging.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 // создается всега один раз
 // builder.Services.AddSingleton
 
-CreateConfiguration(builder);
+InjectSettingsConfiguration(builder);
 
 // создаются единожды для каждого запроса
 builder.Services.AddSingleton<OrderContext>();
@@ -39,7 +40,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-CreateAuthenticationDependencies(builder);
+InjectAuthenticationDependencies(builder);
 
 var app = builder.Build();
 
@@ -58,7 +59,7 @@ app.MapControllers();
 
 app.Run();
 
-void CreateConfiguration(WebApplicationBuilder builder)
+void InjectSettingsConfiguration(WebApplicationBuilder builder)
 {
     var orderRepositorySection = builder.Configuration.GetSection("OrderRepositorySettings")
         .Get<OrderRepositorySettings>();
@@ -70,7 +71,7 @@ void CreateConfiguration(WebApplicationBuilder builder)
     builder.Services.AddSingleton<IAuthRepositorySettings>(authRepositorySection);
 }
 
-void CreateAuthenticationDependencies(WebApplicationBuilder builder)
+void InjectAuthenticationDependencies(WebApplicationBuilder builder)
 {
     // Get configuration for token generation
     var jwtConfig = builder.Configuration.GetSection("JwtSettings")
@@ -82,8 +83,8 @@ void CreateAuthenticationDependencies(WebApplicationBuilder builder)
     builder.Services
     .AddAuthentication(options => {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        //options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(jwt => {
         var key = Encoding.ASCII.GetBytes(
@@ -110,6 +111,9 @@ void CreateAuthenticationDependencies(WebApplicationBuilder builder)
     {
         options.AddPolicy("User", policy =>
                           policy.RequireClaim("UserRole"));
+
+        //options.AddPolicy("Founders", policy =>
+        //              policy.RequireClaim("EmployeeNumber", "1", "2", "3", "4", "5"));
     });
 
     builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)

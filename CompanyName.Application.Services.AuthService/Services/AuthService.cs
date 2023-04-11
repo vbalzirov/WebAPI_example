@@ -77,9 +77,9 @@ namespace CompanyName.Application.Services.AuthService.Services
 
         public async Task<AuthResult> LoginUser(UserLogin userLogin)
         {
-            var existringUser = await manager.FindByNameAsync(userLogin.UserName);
+            var existingUser = await manager.FindByNameAsync(userLogin.UserName);
 
-            if (existringUser == null)
+            if (existingUser == null)
             {
                 return new AuthResult
                 {
@@ -88,7 +88,7 @@ namespace CompanyName.Application.Services.AuthService.Services
                 };
             }
 
-            var isCredentialsCorrect = await manager.CheckPasswordAsync(existringUser, userLogin.Password);
+            var isCredentialsCorrect = await manager.CheckPasswordAsync(existingUser, userLogin.Password);
             if (!isCredentialsCorrect)
             {
                 return new AuthResult
@@ -99,7 +99,7 @@ namespace CompanyName.Application.Services.AuthService.Services
             }
 
             var roles = GetRole();
-            var token = GetJwtToken(existringUser, roles);
+            var token = GetJwtToken(existingUser, roles);
             
             return new AuthResult
             {
