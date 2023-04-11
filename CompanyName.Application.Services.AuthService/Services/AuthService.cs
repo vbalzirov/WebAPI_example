@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using CompanyName.Application.Dal.Auth.Configurations;
 using CompanyName.Application.Dal.Auth.Models;
 using CompanyName.Application.Dal.Auth.Repository;
@@ -60,10 +61,10 @@ namespace CompanyName.Application.Services.AuthService.Services
                 };
             }
 
-            var token = GetJwtToken(user);
+            var roles = GetRole();
+            var token = GetJwtToken(user, roles);
 
             var userDal = mapper.Map<UserRegister, UserDal>(userRegister);
-            userDal.Role = GetRole();
 
             var userId = repository.AddUser(userDal);
 
@@ -97,7 +98,8 @@ namespace CompanyName.Application.Services.AuthService.Services
                 };
             }
 
-            var token = GetJwtToken(existringUser);
+            var roles = GetRole();
+            var token = GetJwtToken(existringUser, roles);
             
             return new AuthResult
             {
@@ -106,24 +108,49 @@ namespace CompanyName.Application.Services.AuthService.Services
             };
         }
 
-        private string GetRole()
+        public async Task<AuthResult> ValidateUser(TokenRequest tokenRequest)
         {
-            return "user";
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+
+            var tokenInValidation = jwtTokenHandler.ValidateToken(tokenRequest.Token, null, out var validatatedToken);
+
+            if (validatatedToken is JwtSecurityToken jwtSecurityToken)
+            {
+                var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
+
+                if (!result)
+                {
+                    return new AuthResult { Success = false, Error = new[] { "" } };
+                }
+            }
+
+            return new AuthResult { Success = false, Error = new[] { "" } };
         }
 
-        private string GetJwtToken(IdentityUser user)
+        private IEnumerable<string> GetRole()
+        {
+            return new[] { "UserRole" };
+        }
+
+        private string GetJwtToken(IdentityUser user, IEnumerable<string> userRoles)
         {
             var key = Encoding.UTF8.GetBytes(settings.Key);
+
+            var claims = new List<Claim>{
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            foreach (var userRole in userRoles) 
+            {
+                claims.Add(new Claim(userRole, "true"));
+            }
 
             // Token descriptor
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                }),
+                Subject = new ClaimsIdentity(claims),
 
                 Expires = DateTime.UtcNow.AddMinutes(settings.TokenTimeToLiveMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)

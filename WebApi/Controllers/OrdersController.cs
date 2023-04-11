@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyName.Application.WebApi.OrdersApi
 {
-    [Authorize (AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize (Policy = "User", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("[controller]")]
     public class OrdersController : ControllerBase

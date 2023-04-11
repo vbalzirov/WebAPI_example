@@ -106,6 +106,12 @@ void CreateAuthenticationDependencies(WebApplicationBuilder builder)
         };
     });
 
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("User", policy =>
+                          policy.RequireClaim("UserRole"));
+    });
+
     builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
         .AddEntityFrameworkStores<AuthContext>();
 }

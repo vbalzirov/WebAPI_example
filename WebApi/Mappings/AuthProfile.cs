@@ -16,8 +16,7 @@ namespace CompanyName.Application.WebApi.OrdersApi.Mappings
 
             CreateMap<UserRegister, UserDal>()
                 .ForMember(src => src.UserName, opt => opt.MapFrom(x => x.UserName))
-                .ForMember(src => src.Id, opt => opt.Ignore())
-                .ForMember(src => src.Role, opt => opt.Ignore());
+                .ForMember(src => src.Id, opt => opt.Ignore());
 
             CreateMap<AuthResult, AuthResponse>();
 
