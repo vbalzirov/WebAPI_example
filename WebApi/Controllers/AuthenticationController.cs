@@ -1,12 +1,12 @@
-﻿using AutoMapper;
-using CompanyName.Application.Services.AuthService.Models;
-using CompanyName.Application.Services.AuthService.Services;
-using CompanyName.Application.WebApi.OrdersApi.Models.Auth.Requests;
-using CompanyName.Application.WebApi.OrdersApi.Models.Auth.Responses;
-using Microsoft.AspNetCore.Mvc;
-
-namespace CompanyName.Application.WebApi.OrdersApi.Controllers
+﻿namespace CompanyName.Application.WebApi.OrdersApi.Controllers
 {
+    using AutoMapper;
+    using CompanyName.Application.Services.AuthService.Models;
+    using CompanyName.Application.Services.AuthService.Services;
+    using CompanyName.Application.WebApi.OrdersApi.Models.Auth.Requests;
+    using CompanyName.Application.WebApi.OrdersApi.Models.Auth.Responses;
+    using Microsoft.AspNetCore.Mvc;
+
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase

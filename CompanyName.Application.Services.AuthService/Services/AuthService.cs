@@ -127,11 +127,6 @@ namespace CompanyName.Application.Services.AuthService.Services
             return new AuthResult { Success = false, Error = new[] { "" } };
         }
 
-        private IEnumerable<string> GetRole()
-        {
-            return new[] { "UserRole" };
-        }
-
         private string GetJwtToken(IdentityUser user, IEnumerable<string> userRoles)
         {
             var key = Encoding.UTF8.GetBytes(settings.Key);
@@ -160,5 +155,11 @@ namespace CompanyName.Application.Services.AuthService.Services
             var token = jwtTokenaHandler.CreateToken(tokenDescriptor);
             return jwtTokenaHandler.WriteToken(token);
         }
+
+        private IEnumerable<string> GetRole()
+        {
+            return new[] { "UserRole" };
+        }
+
     }
 }
