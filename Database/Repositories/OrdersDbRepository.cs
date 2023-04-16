@@ -44,7 +44,7 @@ namespace CompanyName.Application.Dal.Orders.Repositories
 
             existingModel.Number = model.Number;
             existingModel.IssueDate = model.IssueDate;
-            existingModel.OrderProducts = model.OrderProducts;
+            //existingModel.OrderProducts = model.OrderProducts;
 
             context.SaveChanges();
         }

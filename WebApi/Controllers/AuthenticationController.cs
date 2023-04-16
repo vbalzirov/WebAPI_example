@@ -6,6 +6,7 @@
     using CompanyName.Application.WebApi.OrdersApi.Models.Auth.Requests;
     using CompanyName.Application.WebApi.OrdersApi.Models.Auth.Responses;
     using Microsoft.AspNetCore.Mvc;
+    using NLog;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -15,18 +16,24 @@
 
         private readonly IMapper mapper;
 
+        private readonly ILogger logger;
+
         public AuthenticationController(
             IAuthService authService,
-            IMapper autoMapper)
+            IMapper autoMapper,
+            ILogger nLogger)
         {
             service = authService;
             mapper = autoMapper;
+            logger = nLogger;
         }
 
         [Route("register")]
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserRegisterRequest request) 
         {
+            logger.Info("Register request recieved");
+
             if (!ModelState.IsValid)
             {
                 return BadRequest();

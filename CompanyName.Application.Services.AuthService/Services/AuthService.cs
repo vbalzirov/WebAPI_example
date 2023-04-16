@@ -137,10 +137,7 @@ namespace CompanyName.Application.Services.AuthService.Services
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            foreach (var userRole in userRoles) 
-            {
-                claims.Add(new Claim(userRole, "true"));
-            }
+            claims.AddRange(userRoles.Select(ur => new Claim(ur, "true")));
 
             // Token descriptor
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -158,7 +155,7 @@ namespace CompanyName.Application.Services.AuthService.Services
 
         private IEnumerable<string> GetRole()
         {
-            return new[] { "UserRole" };
+            return new[] { "Admin", "Sitter", "User" };
         }
 
     }

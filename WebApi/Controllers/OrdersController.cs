@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyName.Application.WebApi.OrdersApi
 {
-    [Authorize(Policy = "User", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Policy = "Sitter", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("[controller]")]
     public class OrdersController : ControllerBase
@@ -29,7 +29,7 @@ namespace CompanyName.Application.WebApi.OrdersApi
             mapper = automapper;
         }
 
-        // [Authorize(Policy = "HumanResources")]
+        //[Authorize(Policy = "Admin")]
         [HttpGet(Name = "GetOrders")]
         public IActionResult Get()
         {

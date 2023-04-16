@@ -10,7 +10,8 @@ using CompanyName.Application.Dal.Auth.Repository;
 using CompanyName.Application.Services.AuthService.Services;
 using CompanyName.Application.Dal.Orders.Configuratioin;
 using CompanyName.Application.WebApi.OrdersApi.Configuratioin;
-using Microsoft.Extensions.Logging.Configuration;
+using NLog;
+using NLog.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 InjectAuthenticationDependencies(builder);
+
+InjectLogger(builder);
 
 var app = builder.Build();
 
@@ -110,12 +113,40 @@ void InjectAuthenticationDependencies(WebApplicationBuilder builder)
     builder.Services.AddAuthorization(options =>
     {
         options.AddPolicy("User", policy =>
-                          policy.RequireClaim("UserRole"));
+                          policy.RequireClaim("User"));
 
-        //options.AddPolicy("Founders", policy =>
-        //              policy.RequireClaim("EmployeeNumber", "1", "2", "3", "4", "5"));
+        options.AddPolicy("Admin", policy =>
+                      policy.RequireClaim("Admin"));
+
+        options.AddPolicy("Sitter", policy =>
+                      policy.RequireClaim("Sitter"));
+
+
     });
 
     builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
         .AddEntityFrameworkStores<AuthContext>();
+}
+
+void InjectLogger(WebApplicationBuilder builder)
+{
+    var config = new LoggingConfiguration();
+
+    // Targets where to log to: File and Console
+    var logfile = new NLog.Targets.FileTarget("logfile") { FileName = "Logs.txt" };
+    var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
+
+    // Rules for mapping loggers to targets            
+    var minLoggingLevelRule = new LoggingRule();
+    minLoggingLevelRule.SetLoggingLevels(NLog.LogLevel.Warn, NLog.LogLevel.Fatal);
+
+    config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, logconsole);
+    config.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, logfile);
+    config.AddRule(minLoggingLevelRule);
+
+    // Apply config           
+    LogManager.Configuration = config;
+
+    var logger = LogManager.Setup().GetCurrentClassLogger();
+    builder.Services.AddSingleton<NLog.ILogger>(logger);
 }

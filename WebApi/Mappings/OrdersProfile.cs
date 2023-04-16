@@ -40,6 +40,11 @@ namespace CompanyName.Application.WebApi.OrdersApi.Mappings
                 .ForMember(src => src.Name, opt => opt.MapFrom(x => x.Product.Name))
                 .ForMember(src => src.ProductQuantity, opt => opt.MapFrom(x => x.ProductQuantity));
 
+            CreateMap<Product, OrderProductDal>()
+                .ForMember(src => src.ProductId, opt => opt.MapFrom(x => x.Id))
+                .ForMember(src => src.Product, opt => opt.MapFrom(x => new Product { Id = x.Id, Name = x.Name, ProductQuantity = x.ProductQuantity }))
+                .ForMember(src => src.ProductQuantity, opt => opt.MapFrom(x => x.ProductQuantity));
+
             CreateMap<ProductDto, Product>();
         }
     }
