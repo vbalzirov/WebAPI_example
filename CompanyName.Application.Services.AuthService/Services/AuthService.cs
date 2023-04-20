@@ -61,7 +61,7 @@ namespace CompanyName.Application.Services.AuthService.Services
                 };
             }
 
-            var roles = GetRole();
+            var roles = GetRole(userRegister.Email);
             var token = GetJwtToken(user, roles);
 
             var userDal = mapper.Map<UserRegister, UserDal>(userRegister);
@@ -98,7 +98,7 @@ namespace CompanyName.Application.Services.AuthService.Services
                 };
             }
 
-            var roles = GetRole();
+            var roles = GetRole(existingUser.Email);
             var token = GetJwtToken(existingUser, roles);
             
             return new AuthResult
@@ -153,7 +153,7 @@ namespace CompanyName.Application.Services.AuthService.Services
             return jwtTokenaHandler.WriteToken(token);
         }
 
-        private IEnumerable<string> GetRole()
+        private IEnumerable<string> GetRole(string email)
         {
             return new[] { "Admin", "Sitter", "User" };
         }

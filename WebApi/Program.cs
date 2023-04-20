@@ -12,6 +12,7 @@ using CompanyName.Application.Dal.Orders.Configuratioin;
 using CompanyName.Application.WebApi.OrdersApi.Configuratioin;
 using NLog;
 using NLog.Config;
+using CompanyName.Application.Core.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+StartJobs();
 
 void InjectSettingsConfiguration(WebApplicationBuilder builder)
 {
@@ -120,8 +123,6 @@ void InjectAuthenticationDependencies(WebApplicationBuilder builder)
 
         options.AddPolicy("Sitter", policy =>
                       policy.RequireClaim("Sitter"));
-
-
     });
 
     builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -149,4 +150,11 @@ void InjectLogger(WebApplicationBuilder builder)
 
     var logger = LogManager.Setup().GetCurrentClassLogger();
     builder.Services.AddSingleton<NLog.ILogger>(logger);
+}
+
+void StartJobs()
+{
+    StatusCheckJob job = new StatusCheckJob();
+
+    Thread statusCheckThread = new Thread(new ThreadStart(job.Start));
 }

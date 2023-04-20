@@ -27,16 +27,16 @@ namespace CompanyName.Application.Services.ProductService.Services
             return mapper.Map<OrderDal, Order>(resultDal);
         }
 
-        public IEnumerable<Order> Get()
+        public async Task<IEnumerable<Order>> GetAsync()
         {
-            var ordersDal = repository.Get();
+            var ordersDal = await repository.GetAsync();
             var result = mapper.Map<IEnumerable<OrderDal>, IEnumerable<Order>>(ordersDal);
             return result;
         }
 
-        public Order Get(int id) 
+        public async Task<Order> GetAsync(int id) 
         {
-            var orderDal = repository.Get(id);
+            var orderDal = await repository.GetAsync(id);
             return mapper.Map<OrderDal, Order>(orderDal);
         }
         
@@ -46,9 +46,9 @@ namespace CompanyName.Application.Services.ProductService.Services
             repository.Update(orderDal);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            repository.Delete(id);
+            await repository.DeleteAsync(id);
         }
     }
 }

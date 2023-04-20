@@ -23,39 +23,39 @@ namespace CompanyName.Application.Dal.Orders.Repositories
             return order;
         }
 
-        public IEnumerable<OrderDal> Get()
+        public async Task<IEnumerable<OrderDal>> GetAsync()
         {
-            return context.Orders
+            return await context.Orders
                 .Include(o => o.OrderProducts)
-                .ToList();
+                .ToListAsync();
         }
 
-        public OrderDal Get(int id)
+        public async Task<OrderDal> GetAsync(int id)
         {
-            return context.Orders
+            return await context.Orders
                 .Include(o => o.OrderProducts)
-                .Single(t => t.Id == id);
+                .SingleAsync(t => t.Id == id);
         }
 
-        public void Update(OrderDal model)
+        public async Task Update(OrderDal model)
         {
-            var existingModel = context.Orders
-                .Single(t => t.Id == model.Id);
+            var existingModel = await context.Orders
+                .SingleAsync(t => t.Id == model.Id);
 
             existingModel.Number = model.Number;
             existingModel.IssueDate = model.IssueDate;
             //existingModel.OrderProducts = model.OrderProducts;
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             var order = context.Orders
                    .Single(t => t.Id == id);
 
             context.Remove(order);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         private void FillData()

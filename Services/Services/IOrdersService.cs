@@ -7,13 +7,13 @@ namespace CompanyName.Application.Services.ProductService.Services
         Guid Guid { get; }
 
         Order Create(Order order);
-        
-        IEnumerable<Order> Get();
-        
-        Order Get(int id);
-        
+
+        Task<IEnumerable<Order>> GetAsync();
+
+        Task<Order> GetAsync(int id);
+
         void Update(Order model);
 
-        void Delete(int id);
+        Task DeleteAsync(int id);
     }
 }

@@ -10,5 +10,7 @@ namespace CompanyName.Application.Dal.Auth.Models
         public string UserName { get; set; } = null!;
 
         public string Email { get; set; } = null!;        
+
+        public int Role { get; set; }
     }
 }

@@ -5,10 +5,9 @@ namespace CompanyName.Application.Dal.Orders.Repositories
     public interface IOrdersDbRepository
     {
         OrderDal Create(OrderDal order);
-        IEnumerable<OrderDal> Get();
-        OrderDal Get(int id);
-        void Update(OrderDal model);
-
-        void Delete(int id);
+        Task<IEnumerable<OrderDal>> GetAsync();
+        Task<OrderDal> GetAsync(int id);
+        Task Update(OrderDal model);
+        Task DeleteAsync(int id);
     }
 }
